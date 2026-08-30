@@ -113,7 +113,7 @@ feature/MS16SW-123-descricao-da-tarefa ──────────► suas al
 | Ferramenta | Link |
 |---|---|
 | 📦 Repositório | https://github.com/SamuelRamosSantos/MS16SW-orbium |
-| 📋 Jira | *(adicione o link do seu Jira aqui)* |
+| 📋 Jira | https://samuel-utfpr.atlassian.net/jira/software/projects/MSO |
 | 📝 Notion | https://app.notion.com/p/Manuten-o-de-Software-Orbium-3cbc2369918280e69de4f780da55ccb1 |
 
 ---
