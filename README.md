@@ -122,8 +122,11 @@ feature/MS16SW-123-descricao-da-tarefa ──────────► suas al
 
 | Nome | GitHub |
 |---|---|
-| Samuel Ramos Santos | [@SamuelRamosSantos](https://github.com/SamuelRamosSantos) |
-| *(adicione os demais membros)* | |
+| Samuel Ramos Dos Santos | [@SamuelRamosSantos](https://github.com/SamuelRamosSantos) |
+| André Onyszko | [@andreonyzko](https://github.com/andreonyzko) |
+| Eduardo Henrique Domingues | [@eduardo-hd](https://github.com/eduardo-hd) |
+| Maysalu Kauane Silveira | [@ADefinir] |
+| Juan Pagnussat | [@ADefinir] |
 
 ---
 
