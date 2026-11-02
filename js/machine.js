@@ -227,8 +227,23 @@
       }
     };
 
+    this.getColorCount = function () {
+      var tiers = orbium.Machine.colorTiers;
+      var colors = tiers[0].colors;
+
+      for (var i = 0, j = tiers.length; i < j; i++) {
+        if (this.levnr >= tiers[i].fromLevel) {
+          colors = tiers[i].colors;
+        }
+      }
+
+      return colors;
+    };
+
     this.randomizeNextColor = function () {
-      this.nextColor = orbium.Util.generateRandomIndex(3);
+      // generateRandomIndex(max) returns a value from 0 to max inclusive
+      this.nextColor =
+        orbium.Util.generateRandomIndex(this.getColorCount() - 1);
 
       if (this.announcer !== null) {
         this.announcer.announceNextColor(this.nextColor);
@@ -689,4 +704,13 @@
 
     var that = this; this.construct.apply(this, arguments);
   };
+
+  // Number of marble colors drawn per level range (fromLevel is the
+  // 0-based level index). Colors: 0 purple, 1 orange, 2 blue,
+  // 3 green, 4 red, 5 cyan.
+  orbium.Machine.colorTiers = [
+    {fromLevel: 0, colors: 4},  // Levels 1-40
+    {fromLevel: 40, colors: 5}, // Levels 41-70
+    {fromLevel: 70, colors: 6}  // Levels 71+
+  ];
 })(typeof window == "object" ? window.orbium = window.orbium || {} : orbium);
