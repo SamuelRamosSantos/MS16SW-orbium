@@ -1,4 +1,11 @@
 (function (orbium, undefined) {
+  // Só é possível lançar enquanto houver menos bolinhas ativas que este valor
+  var MAX_ACTIVE_MARBLES = 4;
+
+  // Só é possível cair de um tile de queda enquanto houver menos bolinhas
+  // ativas que este valor
+  var ACTIVE_MARBLES_LIMIT_FOR_FALL = 3;
+
   orbium.Counter = function (count, xnr, ynr) {
     var activeMarbles = null;
 
@@ -18,10 +25,10 @@
         }
       }
 
-      if (count < 4) {
+      if (count < MAX_ACTIVE_MARBLES) {
         activeMarbles = count;
       } else {
-        activeMarbles = 4;
+        activeMarbles = MAX_ACTIVE_MARBLES;
       }
 
       this.setImage(0, "counter" + activeMarbles);
@@ -29,11 +36,11 @@
     };
 
     this.isLaunchAllowed = function () {
-      return activeMarbles < 4;
+      return activeMarbles < MAX_ACTIVE_MARBLES;
     };
 
     this.isFallAllowed = function () {
-      return activeMarbles < 3;
+      return activeMarbles < ACTIVE_MARBLES_LIMIT_FOR_FALL;
     };
 
     this.construct.apply(this, arguments);

@@ -8,61 +8,61 @@
     var t = null;
 
     var entries = [
-      [
-        "TAP CAROUSEL TO ROTATE IT",
-        "CLICK CAROUSEL TO ROTATE IT",
-        Math.round(orbium.Tile.size * 5 + orbium.Marble.size / 3),
-        Math.round(orbium.Marble.size * 2),
-        Math.round(orbium.Tile.size * 2.0),
-        Math.round(orbium.Marble.size * 1.7),
-        2,
-        5
-      ], [
-        "SWIPE OVER ORB TO LAUNCH IT",
-        "CLICK ORB TO LAUNCH IT",
-        Math.round(orbium.Tile.size * 5 + orbium.Marble.size / 3),
-        Math.round(orbium.Marble.size * 2),
-        Math.round(orbium.Tile.size * 2.0),
-        Math.round(orbium.Marble.size * 1.7),
-        6,
-        10
-      ], [
-        "FILL CAROUSEL WITH 4 ORBS OF THE SAME COLOR TO EXPLODE IT",
-        "FILL CAROUSEL WITH 4 ORBS OF THE SAME COLOR TO EXPLODE IT",
-        Math.round(orbium.Tile.size / 2),
-        Math.round(orbium.Marble.size * 2.2),
-        Math.round(orbium.Tile.size * 2.1),
-        Math.round(orbium.Marble.size * 3.4),
-        11,
-        17
-      ], [
-        "EXPLODE ALL CAROUSELS TO COMPLETE LEVEL",
-        "EXPLODE ALL CAROUSELS TO COMPLETE LEVEL",
-        Math.round(orbium.Tile.size / 2),
-        Math.round(orbium.Marble.size * 2.2),
-        Math.round(orbium.Tile.size * 2.1),
-        Math.round(orbium.Marble.size * 2.5),
-        18,
-        22
-      ], [
-        "TAP ABOVE TO PAUSE AND SHOW MENU",
-        "CLICK ABOVE TO PAUSE AND SHOW MENU",
-        Math.round(orbium.Tile.size / 2),
-        Math.round(orbium.Tile.size * 3 + orbium.Marble.size * 1.6),
-        Math.round(orbium.Tile.size * 2.0),
-        Math.round(orbium.Marble.size * 2.5),
-        23,
-        27
-      ], [
-        "SHOWS COLOR OF NEXT ORB",
-        "SHOWS COLOR OF NEXT ORB",
-        Math.round(orbium.Tile.size * 5.5),
-        Math.round(orbium.Tile.size * 3 + orbium.Marble.size * 1.6),
-        Math.round(orbium.Tile.size * 2.0),
-        Math.round(orbium.Marble.size * 1.7),
-        28,
-        32
-      ]
+      {
+        touchText: "TAP CAROUSEL TO ROTATE IT",
+        clickText: "CLICK CAROUSEL TO ROTATE IT",
+        left: Math.round(orbium.Tile.size * 5 + orbium.Marble.size / 3),
+        top: Math.round(orbium.Marble.size * 2),
+        width: Math.round(orbium.Tile.size * 2.0),
+        height: Math.round(orbium.Marble.size * 1.7),
+        fromSeconds: 2,
+        toSeconds: 5
+      }, {
+        touchText: "SWIPE OVER ORB TO LAUNCH IT",
+        clickText: "CLICK ORB TO LAUNCH IT",
+        left: Math.round(orbium.Tile.size * 5 + orbium.Marble.size / 3),
+        top: Math.round(orbium.Marble.size * 2),
+        width: Math.round(orbium.Tile.size * 2.0),
+        height: Math.round(orbium.Marble.size * 1.7),
+        fromSeconds: 6,
+        toSeconds: 10
+      }, {
+        touchText: "FILL CAROUSEL WITH 4 ORBS OF THE SAME COLOR TO EXPLODE IT",
+        clickText: "FILL CAROUSEL WITH 4 ORBS OF THE SAME COLOR TO EXPLODE IT",
+        left: Math.round(orbium.Tile.size / 2),
+        top: Math.round(orbium.Marble.size * 2.2),
+        width: Math.round(orbium.Tile.size * 2.1),
+        height: Math.round(orbium.Marble.size * 3.4),
+        fromSeconds: 11,
+        toSeconds: 17
+      }, {
+        touchText: "EXPLODE ALL CAROUSELS TO COMPLETE LEVEL",
+        clickText: "EXPLODE ALL CAROUSELS TO COMPLETE LEVEL",
+        left: Math.round(orbium.Tile.size / 2),
+        top: Math.round(orbium.Marble.size * 2.2),
+        width: Math.round(orbium.Tile.size * 2.1),
+        height: Math.round(orbium.Marble.size * 2.5),
+        fromSeconds: 18,
+        toSeconds: 22
+      }, {
+        touchText: "TAP ABOVE TO PAUSE AND SHOW MENU",
+        clickText: "CLICK ABOVE TO PAUSE AND SHOW MENU",
+        left: Math.round(orbium.Tile.size / 2),
+        top: Math.round(orbium.Tile.size * 3 + orbium.Marble.size * 1.6),
+        width: Math.round(orbium.Tile.size * 2.0),
+        height: Math.round(orbium.Marble.size * 2.5),
+        fromSeconds: 23,
+        toSeconds: 27
+      }, {
+        touchText: "SHOWS COLOR OF NEXT ORB",
+        clickText: "SHOWS COLOR OF NEXT ORB",
+        left: Math.round(orbium.Tile.size * 5.5),
+        top: Math.round(orbium.Tile.size * 3 + orbium.Marble.size * 1.6),
+        width: Math.round(orbium.Tile.size * 2.0),
+        height: Math.round(orbium.Marble.size * 1.7),
+        fromSeconds: 28,
+        toSeconds: 32
+      }
     ];
 
     var current = null;
@@ -111,10 +111,12 @@
     this.show = function () {
       showing = true;
 
-      var left = orbium.xpos + entries[current][2];
-      var top = orbium.ypos + entries[current][3];
-      var width = entries[current][4];
-      var height = entries[current][5];
+      var entry = entries[current];
+
+      var left = orbium.xpos + entry.left;
+      var top = orbium.ypos + entry.top;
+      var width = entry.width;
+      var height = entry.height;
       var fontSize = Math.round(orbium.Tile.size / textFactor);
 
       tutorial0.style.left = "" + left + "px";
@@ -124,9 +126,9 @@
       tutorial0.style.fontSize = "" + fontSize + "px";
 
       if (orbium.has_touch_screen) {
-        tutorial0.innerHTML = entries[current][0];
+        tutorial0.innerHTML = entry.touchText;
       } else {
-        tutorial0.innerHTML = entries[current][1];
+        tutorial0.innerHTML = entry.clickText;
       }
 
       tutorial0.style.visibility = "visible";
@@ -145,8 +147,8 @@
 
       if (enabled && orbium.machine.levnr === 0 &&
         current < entries.length) {
-        fromSeconds = entries[current][6];
-        toSeconds = entries[current][7];
+        fromSeconds = entries[current].fromSeconds;
+        toSeconds = entries[current].toSeconds;
 
         if (t > fromSeconds && t < toSeconds && !showing) {
           this.show();
