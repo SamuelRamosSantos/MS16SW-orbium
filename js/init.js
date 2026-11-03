@@ -153,8 +153,8 @@
     document.getElementById("vp").attributes.content.value = vp_value;
 
     orbium.loader = new orbium.Loader();
+    orbium.storage = new orbium.Storage(); // Before Player, which reads it
     orbium.player = new orbium.Player();
-    orbium.storage = new orbium.Storage();
     orbium.menu = new orbium.Menu();
     orbium.sign = new orbium.Sign();
     orbium.perf = new orbium.Perf();
