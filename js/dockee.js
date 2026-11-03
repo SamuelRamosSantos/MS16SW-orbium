@@ -1,4 +1,16 @@
 (function (orbium, undefined) {
+  // Fração do tamanho do tile a mover [x, y] em cada estágio do tremor (0-2),
+  // por linha de offset
+  var judderAmounts = [
+    [[0.120, 0.025], [0.090, 0.065], [0.070, 0.105]],
+    [[0.025, 0.115], [0.065, 0.100], [0.100, 0.065]],
+    [[0.115, 0.025], [0.100, 0.065], [0.065, 0.110]],
+    [[0.020, 0.115], [0.065, 0.100], [0.100, 0.065]]
+  ];
+
+  // Sentido [x, y] do movimento do tremor por linha de offset
+  var judderSigns = [[-1, 1], [-1, -1], [1, -1], [1, 1]];
+
   orbium.Dockee = function (parent, pos, color, frame) {
     this.parent = null;
     this.pos = null;
@@ -48,78 +60,18 @@
     };
 
     this.judder = function (stage) {
-      var xamount, yamount;
-
       var offset = this.pos + this.parent.orientation;
       if (offset > 6) {
         offset = 0;
       }
 
-      if (offset === 0 || offset === 4) {
-        if (stage === 0) {
-          xamount = Math.round(orbium.Tile.size * 0.120);
-          yamount = Math.round(orbium.Tile.size * 0.025);
-        } else if (stage === 1) {
-          xamount = Math.round(orbium.Tile.size * 0.090);
-          yamount = Math.round(orbium.Tile.size * 0.065);
-        } else if (stage === 2) {
-          xamount = Math.round(orbium.Tile.size * 0.070);
-          yamount = Math.round(orbium.Tile.size * 0.105);
-        }
-      }
+      // Os offsets 0 e 4, 1 e 5, 2 e 6 compartilham a mesma linha; o 3 tem a sua
+      var row = offset % 4;
+      var amounts = judderAmounts[row][stage];
+      var signs = judderSigns[row];
 
-      if (offset === 1 || offset === 5) {
-        if (stage === 0) {
-          xamount = Math.round(orbium.Tile.size * 0.025);
-          yamount = Math.round(orbium.Tile.size * 0.115);
-        } else if (stage === 1) {
-          xamount = Math.round(orbium.Tile.size * 0.065);
-          yamount = Math.round(orbium.Tile.size * 0.100);
-        } else if (stage === 2) {
-          xamount = Math.round(orbium.Tile.size * 0.100);
-          yamount = Math.round(orbium.Tile.size * 0.065);
-        }
-      }
-
-      if (offset === 2 || offset === 6) {
-        if (stage === 0) {
-          xamount = Math.round(orbium.Tile.size * 0.115);
-          yamount = Math.round(orbium.Tile.size * 0.025);
-        } else if (stage === 1) {
-          xamount = Math.round(orbium.Tile.size * 0.100);
-          yamount = Math.round(orbium.Tile.size * 0.065);
-        } else if (stage === 2) {
-          xamount = Math.round(orbium.Tile.size * 0.065);
-          yamount = Math.round(orbium.Tile.size * 0.110);
-        }
-      }
-
-      if (offset === 3) {
-        if (stage === 0) {
-          xamount = Math.round(orbium.Tile.size * 0.020);
-          yamount = Math.round(orbium.Tile.size * 0.115);
-        } else if (stage === 1) {
-          xamount = Math.round(orbium.Tile.size * 0.065);
-          yamount = Math.round(orbium.Tile.size * 0.100);
-        } else if (stage === 2) {
-          xamount = Math.round(orbium.Tile.size * 0.100);
-          yamount = Math.round(orbium.Tile.size * 0.065);
-        }
-      }
-
-      if (offset === 0 || offset === 4) {
-        this.xpos -= xamount;
-        this.ypos += yamount;
-      } else if (offset === 1 || offset === 5) {
-        this.xpos -= xamount;
-        this.ypos -= yamount;
-      } else if (offset === 2 || offset === 6) {
-        this.xpos += xamount;
-        this.ypos -= yamount;
-      } else if (offset === 3) {
-        this.xpos += xamount;
-        this.ypos += yamount;
-      }
+      this.xpos += signs[0] * Math.round(orbium.Tile.size * amounts[0]);
+      this.ypos += signs[1] * Math.round(orbium.Tile.size * amounts[1]);
     };
 
     this.withinTrigger = function (xcheck, ycheck) {
