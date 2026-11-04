@@ -15,6 +15,7 @@
 
     var start = null;
     var startFunc = null;
+    var resumable = false; // True while START shows RESUME
     var select = null;
     var settings = null;
     var about = null;
@@ -530,6 +531,7 @@
       }
 
       start.innerHTML = "START";
+      resumable = false;
     };
 
     this.updateRestart = function () {
@@ -542,6 +544,7 @@
       }
 
       start.innerHTML = "START";
+      resumable = false;
     };
 
     this.updateResume = function () {
@@ -554,6 +557,7 @@
       }
 
       start.innerHTML = "RESUME";
+      resumable = true;
     };
 
     this.updateSound = function () {
@@ -737,6 +741,33 @@
       this.hideMain();
       orbium.machine.resume();
       orbium.sign.show();
+    };
+
+    // True when the main menu is showing RESUME for a paused game
+    this.canResume = function () {
+      return resumable && main.style.visibility === "visible";
+    };
+
+    // Go back from the open submenu, same as its BACK/MENU button.
+    // Returns false if no submenu with a way back is open.
+    this.back = function () {
+      var screens = [
+        [stat, this.statb],
+        [creds, this.credb],
+        [dbg, function () { this.hideDbg(); this.showSett(); }],
+        [sett, this.settb],
+        [abo, this.abob],
+        [lvl, this.lvlb]
+      ];
+
+      for (var i = 0, j = screens.length; i < j; i++) {
+        if (screens[i][0].style.visibility === "visible") {
+          screens[i][1].call(this);
+          return true;
+        }
+      }
+
+      return false;
     };
 
     this.select = function () {

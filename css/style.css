@@ -86,3 +86,57 @@ body {
   color: white;
   border-bottom: 1px solid #666666;
 }
+
+/* Menu item highlighted by keyboard navigation */
+#menu .kbfocus {
+  color: #ccffcc !important;
+  -webkit-text-stroke-color: #66ff66 !important;
+  text-shadow: 0 0 12px #66ff66 !important;
+}
+
+#menu .thumb.kbfocus {
+  border-color: #66ff66;
+  box-shadow: 0 0 10px #66ff66;
+}
+
+/* Ring and arrow on the marble that X/F will launch */
+#launch0 {
+  position: absolute;
+  visibility: hidden;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #66ff66;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #66ff66;
+  pointer-events: none;
+  z-index: 11;
+}
+
+#launch0 span {
+  position: absolute;
+  line-height: 1;
+  color: #66ff66;
+  text-shadow: 0 0 4px #000000, 0 0 4px #000000;
+}
+
+#launch0.dir0 span { left: 50%; bottom: 100%; transform: translateX(-50%); }
+#launch0.dir1 span { top: 50%; left: 100%; transform: translateY(-50%); }
+#launch0.dir2 span { left: 50%; top: 100%; transform: translateX(-50%); }
+#launch0.dir3 span { top: 50%; right: 100%; transform: translateY(-50%); }
+
+#cursor0.ready {
+  border-color: #66ff66;
+  box-shadow: 0 0 10px #66ff66;
+}
+
+#cursor0 {
+  position: absolute;
+  visibility: hidden;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 0 8px #ffffff;
+  pointer-events: none;
+  z-index: 10;
+}
