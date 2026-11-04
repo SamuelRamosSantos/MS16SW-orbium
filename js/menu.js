@@ -30,8 +30,8 @@
     var pack = null;
     var nr = null;
     var edit = null;
-    var prev = null;
-    var next = null;
+    var grid = null;
+    var thumbnail = null;
     var play = null;
     var lvlb = null;
 
@@ -104,8 +104,7 @@
       pack = document.getElementById("pack");
       nr = document.getElementById("nr");
       edit = document.getElementById("edit");
-      prev = document.getElementById("prev");
-      next = document.getElementById("next");
+      grid = document.getElementById("grid");
       play = document.getElementById("play");
       lvlb = document.getElementById("lvlb");
 
@@ -178,10 +177,23 @@
       pack.style.fontSize = "" + fontSize + "px";
       nr.style.fontSize = "" + fontSize + "px";
       edit.style.fontSize = "" + fontSize + "px";
-      prev.style.fontSize = "" + fontSize + "px";
-      next.style.fontSize = "" + fontSize + "px";
       play.style.fontSize = "" + fontSize + "px";
       lvlb.style.fontSize = "" + fontSize + "px";
+
+      // Level select: header row, scrollable thumbnail grid, footer row
+      var gridTop = Math.round(fontSize * 1.4);
+      var footerHeight = Math.round(fontSize * 1.5);
+      var gridHeight = Math.round(height * 0.94) - gridTop - footerHeight;
+      var footerTop = gridTop + gridHeight + Math.round(fontSize * 0.3);
+
+      grid.style.top = "" + gridTop + "px";
+      grid.style.height = "" + gridHeight + "px";
+      grid.style.fontSize = "" + Math.round(fontSize / 2) + "px";
+      edit.style.top = "" + footerTop + "px";
+      play.style.top = "" + footerTop + "px";
+      lvlb.style.top = "" + footerTop + "px";
+
+      thumbnail = new orbium.Thumbnail();
 
       sound.style.fontSize = "" + fontSize + "px";
       tutorial.style.fontSize = "" + fontSize + "px";
@@ -229,8 +241,6 @@
 
       orbium.Util.attachListener(pack, "touchstart", function() {orbium.menu.changePack();});
       orbium.Util.attachListener(edit, "touchstart", function() {orbium.editor.edit();});
-      orbium.Util.attachListener(prev, "touchstart", function() {orbium.menu.prev();});
-      orbium.Util.attachListener(next, "touchstart", function() {orbium.menu.next();});
       orbium.Util.attachListener(play, "touchstart", function() {orbium.menu.start();});
       orbium.Util.attachListener(lvlb, "touchstart", function() {orbium.menu.lvlb();});
 
@@ -279,8 +289,6 @@
 
       orbium.Util.attachListener(pack, "mousedown", function() {orbium.menu.changePack();});
       orbium.Util.attachListener(edit, "mousedown", function() {orbium.editor.edit();});
-      orbium.Util.attachListener(prev, "mousedown", function() {orbium.menu.prev();});
-      orbium.Util.attachListener(next, "mousedown", function() {orbium.menu.next();});
       orbium.Util.attachListener(play, "mousedown", function() {orbium.menu.start();});
       orbium.Util.attachListener(lvlb, "mousedown", function() {orbium.menu.lvlb();});
 
@@ -337,12 +345,15 @@
     this.showLvl = function () {
       orbium.machine.resetLevel();
 
-      menu.style.opacity = "0.6";
+      menu.style.opacity = "0.9";
       menu.style.visibility = "visible";
 
       if (orbium.Machine.editorMode) {
         pack.style.visibility = "visible";
         edit.style.visibility = "visible";
+
+        // Editor levels can change, never trust cached thumbnails
+        thumbnail.clear();
       } else {
         pack.style.visibility = "hidden";
         edit.style.visibility = "hidden";
@@ -350,12 +361,17 @@
 
       this.setPackName();
       this.setLvlNr();
+      this.buildGrid();
 
       lvl.style.visibility = "visible";
-      lvl.style.top = "9%";
+      lvl.style.top = "3%";
+
+      this.scrollToCurrent();
     };
 
     this.hideLvl = function () {
+      thumbnail.cancel();
+
       lvl.style.visibility = "hidden";
       edit.style.visibility = "hidden";
       pack.style.visibility = "hidden";
@@ -637,61 +653,94 @@
       pack.innerHTML = "LEVELS: " + orbium.packs[orbium.pack_idx].name;
     };
 
-    this.setLvlNr = function () {
-      var textShadow = Math.round(orbium.Tile.size / shadowFactor);
+    // Highest level the player may select
+    var reachedLevel = function () {
+      var last = orbium.level.length - 1;
 
-      if (orbium.machine.levnr === 0) {
-        prev.style.color = "#444444";
-        prev.style.webkitTextStrokeColor = "#666666";
-        prev.style.textShadow = "0px 0px " + textShadow + "px #666666";
-        prev.style.cursor = "default";
-      } else {
-        prev.style.color = "#cccccc";
-        prev.style.webkitTextStrokeColor = "white";
-        prev.style.textShadow = "0px 0px " + textShadow + "px #ffffff";
-        prev.style.cursor = "pointer";
+      if (orbium.Machine.editorMode) {
+        return last;
       }
 
-      var reached = orbium.storage.readValue("reachedlevel");
-      if (reached !== null) {
-        reached = parseInt(reached);
-      } else {
+      var reached = parseInt(orbium.storage.readValue("reachedlevel"));
+      if (isNaN(reached) || reached < 0) {
         reached = 0;
       }
 
-      if (orbium.machine.levnr === reached) {
-        next.style.color = "#444444";
-        next.style.webkitTextStrokeColor = "#666666";
-        next.style.textShadow = "0px 0px " + textShadow + "px #666666";
-        next.style.cursor = "default";
-      } else {
-        next.style.color = "#cccccc";
-        next.style.webkitTextStrokeColor = "white";
-        next.style.textShadow = "0px 0px " + textShadow + "px #ffffff";
-        next.style.cursor = "pointer";
-      }
-
-      var act = orbium.machine.levnr + 1;
-      if (act < 10) {
-        act = "0" + act;
-      }
-
-      var tot = reached + 1;
-      if (tot < 10) {
-        tot = "0" + tot;
-      }
-
-      nr.innerHTML = "" + act + "/" + tot;
+      return Math.min(reached, last);
     };
 
-    this.prev = function () {
-      orbium.machine.prevLevel();
-      this.setLvlNr();
+    var pad = function (n) {
+      return n < 10 ? "0" + n : "" + n;
     };
 
-    this.next = function () {
-      orbium.machine.nextLevel();
-      this.setLvlNr();
+    this.setLvlNr = function () {
+      nr.innerHTML = pad(orbium.machine.levnr + 1) + "/" +
+        pad(reachedLevel() + 1);
+    };
+
+    this.buildGrid = function () {
+      thumbnail.cancel();
+      grid.innerHTML = "";
+
+      var reached = reachedLevel();
+
+      for (var i = 0, j = orbium.level.length; i < j; i++) {
+        var card = document.createElement("div");
+        var label = document.createElement("span");
+
+        card.className = "thumb";
+
+        if (i > reached) {
+          var placeholder = document.createElement("div");
+          placeholder.className = "placeholder";
+          card.appendChild(placeholder);
+
+          card.className += " locked";
+          label.innerHTML = "LOCKED";
+        } else {
+          var preview = thumbnail.createTarget();
+          card.appendChild(preview);
+
+          label.innerHTML = pad(i + 1);
+
+          if (i === orbium.machine.levnr) {
+            card.className += " current";
+          }
+
+          thumbnail.request(i, preview);
+
+          // Click also fires for a tap, but not when the finger scrolls
+          orbium.Util.attachListener(card, "click", selectFunc(i));
+        }
+
+        card.appendChild(label);
+        grid.appendChild(card);
+      }
+    };
+
+    var selectFunc = function (levnr) {
+      return function () {
+        orbium.menu.selectLevel(levnr);
+      };
+    };
+
+    this.scrollToCurrent = function () {
+      var current = grid.children[orbium.machine.levnr];
+
+      if (current !== undefined) {
+        grid.scrollTop = current.offsetTop - grid.clientHeight / 2 +
+          current.offsetHeight / 2;
+      }
+    };
+
+    // Jump straight to a level and start playing it
+    this.selectLevel = function (levnr) {
+      if (levnr > reachedLevel()) {
+        return;
+      }
+
+      orbium.machine.gotoLevel(levnr);
+      this.start();
     };
 
     this.start = function () {
@@ -1001,7 +1050,13 @@
 
       this.setPackName();
 
-      orbium.machine.resetLevel();
+      // The new pack may have fewer levels than the current level number
+      orbium.machine.gotoLevel(
+        Math.min(Math.max(orbium.machine.levnr, 0), orbium.level.length - 1));
+
+      this.setLvlNr();
+      this.buildGrid();
+      this.scrollToCurrent();
     };
 
     this.construct.apply(this, arguments);

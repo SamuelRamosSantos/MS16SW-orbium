@@ -54,11 +54,13 @@
       }
     };
 
-    this.prevLevel = function () {
-      if (this.levnr > 0) {
-        this.levnr -= 2;
-        this.nextLevel();
+    this.gotoLevel = function (levnr) {
+      if (levnr < 0 || levnr > orbium.level.length - 1) {
+        return;
       }
+
+      this.levnr = levnr - 1;
+      this.nextLevel();
     };
 
     this.nextLevel = function () {
