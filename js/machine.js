@@ -229,6 +229,18 @@
       }
     };
 
+    this.isPaused = function () {
+      return this.paused;
+    };
+
+    this.pause = function () {
+      this.paused = true;
+    };
+
+    this.resume = function () {
+      this.paused = false;
+    };
+
     this.getColorCount = function () {
       var tiers = orbium.Machine.colorTiers;
       var colors = tiers[0].colors;
