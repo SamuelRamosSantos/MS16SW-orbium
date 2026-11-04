@@ -338,12 +338,8 @@
 
       var target = this.tiles[count];
 
-      if (!this.paused) {
-        if (target instanceof orbium.Rotator) {
-          target.triggerRotate(xtap, ytap);
-        } else if (target instanceof orbium.Counter) {
-          orbium.menu.pause();
-        }
+      if (target && !this.paused) {
+        target.tap(xtap, ytap);
       }
 
       if (orbium.editor.haveSelected()) {

@@ -195,6 +195,10 @@
       }
     };
 
+    this.tap = function (xtap, ytap) {
+      this.triggerRotate(xtap, ytap);
+    };
+
     this.rotate = function (send) {
       if (judderc === -1 && fullc === -1) {
         if (orbium.client !== undefined && send) {

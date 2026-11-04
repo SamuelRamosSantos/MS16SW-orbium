@@ -131,6 +131,10 @@
     orbium.Tile.prototype.influence = function (marble) {
       // Default implementation does nothing
     };
+
+    orbium.Tile.prototype.tap = function (xtap, ytap) {
+      // Default implementation does nothing
+    };
   };
 
   orbium.Tile.prototype = new orbium.Sprite();
