@@ -62,50 +62,52 @@
     };
 
     this.nextLevel = function () {
-      if (this.levnr < orbium.level.length - 1) {
-        this.levnr++;
-
-        if (this.lane !== null) {
-          this.lane.destruct();
-        }
-
-        for (var i = 0, j = this.tiles.length; i < j; i++) {
-          this.tiles[i].destruct();
-        }
-        this.tiles.length = 0;
-
-        for (i = 0, j = this.marbles.length; i < j; i++) {
-          this.marbles[i].destruct();
-        }
-        this.marbles.length = 0;
-
-        // Set special tiles to null
-        this.counter = null;
-        this.clock = null;
-        this.announcer = null;
-        this.matcher = null;
-        this.sequencer = null;
-
-        // Add tiles
-        var count = 0;
-        for (var ynr = 0; ynr < orbium.Machine.vertTiles; ynr++) {
-          for (var xnr = 0; xnr < orbium.Machine.horizTiles; xnr++) {
-            var symbol = orbium.level[this.levnr][count];
-
-            this.createTile(symbol, count, xnr, ynr);
-
-            count++;
-          }
-        }
-
-        // Set the correct base for tiles
-        this.calculateBases();
-
-        this.lane = new orbium.Lane();
-
-        // Save level progress
-        this.saveLevel(this.levnr);
+      if (this.levnr >= orbium.level.length - 1) {
+        return;
       }
+
+      this.levnr++;
+
+      if (this.lane !== null) {
+        this.lane.destruct();
+      }
+
+      for (var i = 0, j = this.tiles.length; i < j; i++) {
+        this.tiles[i].destruct();
+      }
+      this.tiles.length = 0;
+
+      for (i = 0, j = this.marbles.length; i < j; i++) {
+        this.marbles[i].destruct();
+      }
+      this.marbles.length = 0;
+
+      // Set special tiles to null
+      this.counter = null;
+      this.clock = null;
+      this.announcer = null;
+      this.matcher = null;
+      this.sequencer = null;
+
+      // Add tiles
+      var count = 0;
+      for (var ynr = 0; ynr < orbium.Machine.vertTiles; ynr++) {
+        for (var xnr = 0; xnr < orbium.Machine.horizTiles; xnr++) {
+          var symbol = orbium.level[this.levnr][count];
+
+          this.createTile(symbol, count, xnr, ynr);
+
+          count++;
+        }
+      }
+
+      // Set the correct base for tiles
+      this.calculateBases();
+
+      this.lane = new orbium.Lane();
+
+      // Save level progress
+      this.saveLevel(this.levnr);
     };
 
     this.createTile = function (symbol, count, xnr, ynr) {
@@ -227,6 +229,18 @@
       }
     };
 
+    this.isPaused = function () {
+      return this.paused;
+    };
+
+    this.pause = function () {
+      this.paused = true;
+    };
+
+    this.resume = function () {
+      this.paused = false;
+    };
+
     this.getColorCount = function () {
       var tiers = orbium.Machine.colorTiers;
       var colors = tiers[0].colors;
@@ -324,12 +338,8 @@
 
       var target = this.tiles[count];
 
-      if (!this.paused) {
-        if (target instanceof orbium.Rotator) {
-          target.triggerRotate(xtap, ytap);
-        } else if (target instanceof orbium.Counter) {
-          orbium.menu.pause();
-        }
+      if (target && !this.paused) {
+        target.tap(xtap, ytap);
       }
 
       if (orbium.editor.haveSelected()) {

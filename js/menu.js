@@ -647,8 +647,8 @@
     };
 
     this.pause = function () {
-      if (!orbium.machine.paused) {
-        orbium.machine.paused = true;
+      if (!orbium.machine.isPaused()) {
+        orbium.machine.pause();
 
         orbium.sign.hide();
         orbium.tutorial.hide();
@@ -664,7 +664,7 @@
 
     this.resume = function () {
       this.hideMain();
-      orbium.machine.paused = false;
+      orbium.machine.resume();
       orbium.sign.show();
     };
 

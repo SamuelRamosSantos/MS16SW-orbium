@@ -43,6 +43,10 @@
       return activeMarbles < ACTIVE_MARBLES_LIMIT_FOR_FALL;
     };
 
+    this.tap = function (xtap, ytap) {
+      orbium.menu.pause();
+    };
+
     this.construct.apply(this, arguments);
   };
 
