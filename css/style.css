@@ -64,3 +64,25 @@ body {
   color: #cccccc;
   z-index: 20;
 }
+
+#statlist {
+  margin: 2% 6%;
+  overflow-y: auto;
+  -webkit-text-stroke-width: 0;
+}
+
+#statlist table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#statlist th,
+#statlist td {
+  padding: 0.15em 0.4em;
+  text-align: center;
+}
+
+#statlist th {
+  color: white;
+  border-bottom: 1px solid #666666;
+}

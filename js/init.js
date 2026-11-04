@@ -154,6 +154,7 @@
 
     orbium.loader = new orbium.Loader();
     orbium.storage = new orbium.Storage(); // Before Player, which reads it
+    orbium.stats = new orbium.Stats();
     orbium.player = new orbium.Player();
     orbium.menu = new orbium.Menu();
     orbium.sign = new orbium.Sign();

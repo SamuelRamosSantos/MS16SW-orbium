@@ -213,16 +213,28 @@
     this.startLevel = function () {
       this.paused = false;
       this.lane.injectMarble();
+
+      if (orbium.stats !== undefined) {
+        orbium.stats.startAttempt(this.levnr);
+      }
     };
 
     this.restartLevel = function () {
       this.paused = false;
       this.resetLevel();
       this.lane.injectMarble();
+
+      if (orbium.stats !== undefined) {
+        orbium.stats.startAttempt(this.levnr);
+      }
     };
 
     this.failLevel = function (msg) {
       this.paused = true;
+
+      if (orbium.stats !== undefined) {
+        orbium.stats.fail();
+      }
 
       if (orbium.menu !== undefined) {
         orbium.menu.fail(msg);
@@ -279,6 +291,11 @@
 
       if (complete) {
         this.paused = true;
+
+        if (orbium.stats !== undefined) {
+          orbium.stats.complete(this.levnr);
+        }
+
         orbium.menu.showCompl();
       }
     };
@@ -676,6 +693,10 @@
             updateMarbles(dt);
             removeStaleMarbles();
             updateSigns(dt);
+
+            if (orbium.stats !== undefined) {
+              orbium.stats.tick(dt);
+            }
           }
 
           drawLane();

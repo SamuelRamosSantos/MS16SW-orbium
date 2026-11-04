@@ -217,6 +217,10 @@
     var explode = function () {
       orbium.player.play("explode");
 
+      if (orbium.stats !== undefined) {
+        orbium.stats.explosion();
+      }
+
       that.broken = true;
       fullc = 0;
     };
