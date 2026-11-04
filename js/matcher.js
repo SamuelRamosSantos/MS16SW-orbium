@@ -74,7 +74,7 @@
       that.invalidate();
     };
 
-    var deactivate = function () {
+    this.deactivate = function () {
       for (var i = 0, j = indicators.length; i < j; i++) {
         indicators[i].destruct();
       }
@@ -95,8 +95,6 @@
           return false;
         }
       }
-
-      deactivate();
 
       return true;
     };

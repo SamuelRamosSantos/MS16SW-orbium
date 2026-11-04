@@ -243,6 +243,8 @@
         if (orbium.machine.matcher !== null &&
           orbium.machine.matcher.active()) {
           if (orbium.machine.matcher.matches(pattern())) {
+            orbium.machine.matcher.deactivate();
+
             explode();
 
             again = true;
