@@ -15,6 +15,7 @@
 
     var start = null;
     var startFunc = null;
+    var resumable = false; // True while START shows RESUME
     var select = null;
     var settings = null;
     var about = null;
@@ -29,15 +30,21 @@
     var pack = null;
     var nr = null;
     var edit = null;
-    var prev = null;
-    var next = null;
+    var grid = null;
+    var thumbnail = null;
     var play = null;
     var lvlb = null;
 
     var sound = null;
     var tutorial = null;
     var limits = null;
+    var stats = null;
     var filler0 = null;
+
+    var stat = null;
+    var statsum = null;
+    var statlist = null;
+    var statb = null;
 
     var debug = null;
     var logo = null;
@@ -97,15 +104,20 @@
       pack = document.getElementById("pack");
       nr = document.getElementById("nr");
       edit = document.getElementById("edit");
-      prev = document.getElementById("prev");
-      next = document.getElementById("next");
+      grid = document.getElementById("grid");
       play = document.getElementById("play");
       lvlb = document.getElementById("lvlb");
 
       sound = document.getElementById("sound");
       tutorial = document.getElementById("tutorial");
       limits = document.getElementById("limits");
+      stats = document.getElementById("stats");
       filler0 = document.getElementById("filler0");
+
+      stat = document.getElementById("stat");
+      statsum = document.getElementById("statsum");
+      statlist = document.getElementById("statlist");
+      statb = document.getElementById("statb");
 
       debug = document.getElementById("debug");
       logo = document.getElementById("logo");
@@ -165,15 +177,36 @@
       pack.style.fontSize = "" + fontSize + "px";
       nr.style.fontSize = "" + fontSize + "px";
       edit.style.fontSize = "" + fontSize + "px";
-      prev.style.fontSize = "" + fontSize + "px";
-      next.style.fontSize = "" + fontSize + "px";
       play.style.fontSize = "" + fontSize + "px";
       lvlb.style.fontSize = "" + fontSize + "px";
+
+      // Level select: header row, scrollable thumbnail grid, footer row
+      var gridTop = Math.round(fontSize * 1.4);
+      var footerHeight = Math.round(fontSize * 1.5);
+      var gridHeight = Math.round(height * 0.94) - gridTop - footerHeight;
+      var footerTop = gridTop + gridHeight + Math.round(fontSize * 0.3);
+
+      grid.style.top = "" + gridTop + "px";
+      grid.style.height = "" + gridHeight + "px";
+      grid.style.fontSize = "" + Math.round(fontSize / 2) + "px";
+      edit.style.top = "" + footerTop + "px";
+      play.style.top = "" + footerTop + "px";
+      lvlb.style.top = "" + footerTop + "px";
+
+      thumbnail = new orbium.Thumbnail();
 
       sound.style.fontSize = "" + fontSize + "px";
       tutorial.style.fontSize = "" + fontSize + "px";
       limits.style.fontSize = "" + fontSize + "px";
+      stats.style.fontSize = "" + fontSize + "px";
       filler0.style.fontSize = "" + fontSize + "px";
+
+      var smallFontSize = Math.round(fontSize / 2);
+
+      statsum.style.fontSize = "" + smallFontSize + "px";
+      statlist.style.fontSize = "" + smallFontSize + "px";
+      statlist.style.height = "" + Math.round(orbium.Tile.size * 2.2) + "px";
+      statb.style.fontSize = "" + fontSize + "px";
 
       debug.style.fontSize = "" + fontSize + "px";
       logo.style.fontSize = "" + fontSize + "px";
@@ -208,8 +241,6 @@
 
       orbium.Util.attachListener(pack, "touchstart", function() {orbium.menu.changePack();});
       orbium.Util.attachListener(edit, "touchstart", function() {orbium.editor.edit();});
-      orbium.Util.attachListener(prev, "touchstart", function() {orbium.menu.prev();});
-      orbium.Util.attachListener(next, "touchstart", function() {orbium.menu.next();});
       orbium.Util.attachListener(play, "touchstart", function() {orbium.menu.start();});
       orbium.Util.attachListener(lvlb, "touchstart", function() {orbium.menu.lvlb();});
 
@@ -220,6 +251,8 @@
       orbium.Util.attachListener(sound, "touchstart", function() {orbium.menu.toggleSound();});
       orbium.Util.attachListener(tutorial, "touchstart", function() {orbium.menu.toggleTutorial();});
       orbium.Util.attachListener(limits, "touchstart", function() {orbium.menu.toggleLimits();});
+      orbium.Util.attachListener(stats, "touchstart", function() {orbium.menu.stats();});
+      orbium.Util.attachListener(statb, "touchstart", function() {orbium.menu.statb();});
       orbium.Util.attachListener(settb, "touchstart", function() {orbium.menu.settb();});
 
       orbium.Util.attachListener(debug, "touchstart", function() {orbium.menu.debug();});
@@ -256,8 +289,6 @@
 
       orbium.Util.attachListener(pack, "mousedown", function() {orbium.menu.changePack();});
       orbium.Util.attachListener(edit, "mousedown", function() {orbium.editor.edit();});
-      orbium.Util.attachListener(prev, "mousedown", function() {orbium.menu.prev();});
-      orbium.Util.attachListener(next, "mousedown", function() {orbium.menu.next();});
       orbium.Util.attachListener(play, "mousedown", function() {orbium.menu.start();});
       orbium.Util.attachListener(lvlb, "mousedown", function() {orbium.menu.lvlb();});
 
@@ -268,6 +299,8 @@
       orbium.Util.attachListener(sound, "mousedown", function() {orbium.menu.toggleSound();});
       orbium.Util.attachListener(tutorial, "mousedown", function() {orbium.menu.toggleTutorial();});
       orbium.Util.attachListener(limits, "mousedown", function() {orbium.menu.toggleLimits();});
+      orbium.Util.attachListener(stats, "mousedown", function() {orbium.menu.stats();});
+      orbium.Util.attachListener(statb, "mousedown", function() {orbium.menu.statb();});
       orbium.Util.attachListener(settb, "mousedown", function() {orbium.menu.settb();});
 
       orbium.Util.attachListener(debug, "mousedown", function() {orbium.menu.debug();});
@@ -312,12 +345,15 @@
     this.showLvl = function () {
       orbium.machine.resetLevel();
 
-      menu.style.opacity = "0.6";
+      menu.style.opacity = "0.9";
       menu.style.visibility = "visible";
 
       if (orbium.Machine.editorMode) {
         pack.style.visibility = "visible";
         edit.style.visibility = "visible";
+
+        // Editor levels can change, never trust cached thumbnails
+        thumbnail.clear();
       } else {
         pack.style.visibility = "hidden";
         edit.style.visibility = "hidden";
@@ -325,12 +361,17 @@
 
       this.setPackName();
       this.setLvlNr();
+      this.buildGrid();
 
       lvl.style.visibility = "visible";
-      lvl.style.top = "9%";
+      lvl.style.top = "3%";
+
+      this.scrollToCurrent();
     };
 
     this.hideLvl = function () {
+      thumbnail.cancel();
+
       lvl.style.visibility = "hidden";
       edit.style.visibility = "hidden";
       pack.style.visibility = "hidden";
@@ -356,6 +397,52 @@
     this.hideSett = function () {
       menu.style.visibility = "hidden";
       sett.style.visibility = "hidden";
+    };
+
+    this.showStat = function () {
+      this.renderStats();
+
+      menu.style.visibility = "visible";
+
+      stat.style.visibility = "visible";
+      stat.style.top = "8%";
+    };
+
+    this.hideStat = function () {
+      menu.style.visibility = "hidden";
+      stat.style.visibility = "hidden";
+    };
+
+    this.renderStats = function () {
+      var summary = orbium.stats.getSummary();
+      var format = orbium.Stats.formatTime;
+
+      statsum.innerHTML =
+        "TOTAL TIME: " + format(summary.totalTime) + "<br>" +
+        "ATTEMPTS: " + summary.attempts +
+        " &nbsp; COMPLETED: " + summary.completions +
+        " &nbsp; RATE: " + Math.round(summary.completionRate * 100) + "%<br>" +
+        "EXPLOSIONS: " + summary.explosions;
+
+      if (summary.levels.length === 0) {
+        statlist.innerHTML = "<p align=\"center\">NO LEVELS PLAYED YET</p>";
+        return;
+      }
+
+      var html = "<table><tr><th>LEVEL</th><th>ATTEMPTS</th>" +
+        "<th>COMPLETED</th><th>BEST TIME</th></tr>";
+
+      for (var i = 0, j = summary.levels.length; i < j; i++) {
+        var lvl = summary.levels[i];
+        var nr = lvl.levnr + 1;
+
+        html += "<tr><td>" + (nr < 10 ? "0" + nr : nr) + "</td>" +
+          "<td>" + lvl.attempts + "</td>" +
+          "<td>" + lvl.completions + "</td>" +
+          "<td>" + format(lvl.bestTime) + "</td></tr>";
+      }
+
+      statlist.innerHTML = html + "</table>";
     };
 
     this.showAbout = function () {
@@ -460,6 +547,7 @@
       }
 
       start.innerHTML = "START";
+      resumable = false;
     };
 
     this.updateRestart = function () {
@@ -472,6 +560,7 @@
       }
 
       start.innerHTML = "START";
+      resumable = false;
     };
 
     this.updateResume = function () {
@@ -484,6 +573,7 @@
       }
 
       start.innerHTML = "RESUME";
+      resumable = true;
     };
 
     this.updateSound = function () {
@@ -563,61 +653,94 @@
       pack.innerHTML = "LEVELS: " + orbium.packs[orbium.pack_idx].name;
     };
 
-    this.setLvlNr = function () {
-      var textShadow = Math.round(orbium.Tile.size / shadowFactor);
+    // Highest level the player may select
+    var reachedLevel = function () {
+      var last = orbium.level.length - 1;
 
-      if (orbium.machine.levnr === 0) {
-        prev.style.color = "#444444";
-        prev.style.webkitTextStrokeColor = "#666666";
-        prev.style.textShadow = "0px 0px " + textShadow + "px #666666";
-        prev.style.cursor = "default";
-      } else {
-        prev.style.color = "#cccccc";
-        prev.style.webkitTextStrokeColor = "white";
-        prev.style.textShadow = "0px 0px " + textShadow + "px #ffffff";
-        prev.style.cursor = "pointer";
+      if (orbium.Machine.editorMode) {
+        return last;
       }
 
-      var reached = orbium.storage.readValue("reachedlevel");
-      if (reached !== null) {
-        reached = parseInt(reached);
-      } else {
+      var reached = parseInt(orbium.storage.readValue("reachedlevel"));
+      if (isNaN(reached) || reached < 0) {
         reached = 0;
       }
 
-      if (orbium.machine.levnr === reached) {
-        next.style.color = "#444444";
-        next.style.webkitTextStrokeColor = "#666666";
-        next.style.textShadow = "0px 0px " + textShadow + "px #666666";
-        next.style.cursor = "default";
-      } else {
-        next.style.color = "#cccccc";
-        next.style.webkitTextStrokeColor = "white";
-        next.style.textShadow = "0px 0px " + textShadow + "px #ffffff";
-        next.style.cursor = "pointer";
-      }
-
-      var act = orbium.machine.levnr + 1;
-      if (act < 10) {
-        act = "0" + act;
-      }
-
-      var tot = reached + 1;
-      if (tot < 10) {
-        tot = "0" + tot;
-      }
-
-      nr.innerHTML = "" + act + "/" + tot;
+      return Math.min(reached, last);
     };
 
-    this.prev = function () {
-      orbium.machine.prevLevel();
-      this.setLvlNr();
+    var pad = function (n) {
+      return n < 10 ? "0" + n : "" + n;
     };
 
-    this.next = function () {
-      orbium.machine.nextLevel();
-      this.setLvlNr();
+    this.setLvlNr = function () {
+      nr.innerHTML = pad(orbium.machine.levnr + 1) + "/" +
+        pad(reachedLevel() + 1);
+    };
+
+    this.buildGrid = function () {
+      thumbnail.cancel();
+      grid.innerHTML = "";
+
+      var reached = reachedLevel();
+
+      for (var i = 0, j = orbium.level.length; i < j; i++) {
+        var card = document.createElement("div");
+        var label = document.createElement("span");
+
+        card.className = "thumb";
+
+        if (i > reached) {
+          var placeholder = document.createElement("div");
+          placeholder.className = "placeholder";
+          card.appendChild(placeholder);
+
+          card.className += " locked";
+          label.innerHTML = "LOCKED";
+        } else {
+          var preview = thumbnail.createTarget();
+          card.appendChild(preview);
+
+          label.innerHTML = pad(i + 1);
+
+          if (i === orbium.machine.levnr) {
+            card.className += " current";
+          }
+
+          thumbnail.request(i, preview);
+
+          // Click also fires for a tap, but not when the finger scrolls
+          orbium.Util.attachListener(card, "click", selectFunc(i));
+        }
+
+        card.appendChild(label);
+        grid.appendChild(card);
+      }
+    };
+
+    var selectFunc = function (levnr) {
+      return function () {
+        orbium.menu.selectLevel(levnr);
+      };
+    };
+
+    this.scrollToCurrent = function () {
+      var current = grid.children[orbium.machine.levnr];
+
+      if (current !== undefined) {
+        grid.scrollTop = current.offsetTop - grid.clientHeight / 2 +
+          current.offsetHeight / 2;
+      }
+    };
+
+    // Jump straight to a level and start playing it
+    this.selectLevel = function (levnr) {
+      if (levnr > reachedLevel()) {
+        return;
+      }
+
+      orbium.machine.gotoLevel(levnr);
+      this.start();
     };
 
     this.start = function () {
@@ -649,6 +772,7 @@
     this.pause = function () {
       if (!orbium.machine.isPaused()) {
         orbium.machine.pause();
+        orbium.stats.flush();
 
         orbium.sign.hide();
         orbium.tutorial.hide();
@@ -666,6 +790,33 @@
       this.hideMain();
       orbium.machine.resume();
       orbium.sign.show();
+    };
+
+    // True when the main menu is showing RESUME for a paused game
+    this.canResume = function () {
+      return resumable && main.style.visibility === "visible";
+    };
+
+    // Go back from the open submenu, same as its BACK/MENU button.
+    // Returns false if no submenu with a way back is open.
+    this.back = function () {
+      var screens = [
+        [stat, this.statb],
+        [creds, this.credb],
+        [dbg, function () { this.hideDbg(); this.showSett(); }],
+        [sett, this.settb],
+        [abo, this.abob],
+        [lvl, this.lvlb]
+      ];
+
+      for (var i = 0, j = screens.length; i < j; i++) {
+        if (screens[i][0].style.visibility === "visible") {
+          screens[i][1].call(this);
+          return true;
+        }
+      }
+
+      return false;
     };
 
     this.select = function () {
@@ -697,6 +848,16 @@
     this.settb = function () {
       this.hideSett();
       this.showMain();
+    };
+
+    this.stats = function () {
+      this.hideSett();
+      this.showStat();
+    };
+
+    this.statb = function () {
+      this.hideStat();
+      this.showSett();
     };
 
     this.toggleSound = function () {
@@ -746,6 +907,8 @@
 
       orbium.storage.deleteValue("lastlevel");
       orbium.storage.deleteValue("reachedlevel");
+
+      orbium.stats.reset();
 
       this.hideDbg();
       this.updateStart();
@@ -887,7 +1050,13 @@
 
       this.setPackName();
 
-      orbium.machine.resetLevel();
+      // The new pack may have fewer levels than the current level number
+      orbium.machine.gotoLevel(
+        Math.min(Math.max(orbium.machine.levnr, 0), orbium.level.length - 1));
+
+      this.setLvlNr();
+      this.buildGrid();
+      this.scrollToCurrent();
     };
 
     this.construct.apply(this, arguments);

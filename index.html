@@ -46,12 +46,15 @@
   <script src="js/loader.js"></script>
   <script src="js/player.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/stats.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/editor.js"></script>
   <script src="js/sign.js"></script>
   <script src="js/perf.js"></script>
   <script src="js/client.js"></script>
   <script src="js/tutorial.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/thumbnail.js"></script>
   <script src="js/machine.js"></script>
   <script src="js/init.js"></script>
 </head>
@@ -69,14 +72,10 @@
   </div>
 
   <div id="lvl" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
-    <div id="pack" style="position: absolute; left: 5%; cursor: pointer;">LEVELS: X</div>
-    <div id="nr" style="position: absolute; left: 79%;">&nbsp;</div>
-    <div id="testfill0">&nbsp;</div>
-    <div id="testfill1">&nbsp;</div>
-    <div id="edit" style="position: absolute; left: 82%; cursor: pointer;">EDIT</div>
-    <div id="testfill2">&nbsp;</div>
-    <div id="prev" style="position: absolute; left: 5%; cursor: pointer;" align="center">PREV</div>
-    <div id="next" style="position: absolute; left: 30%; cursor: pointer;" align="center">NEXT</div>
+    <div id="pack" style="position: absolute; top: 0; left: 5%; cursor: pointer;">LEVELS: X</div>
+    <div id="nr" style="position: absolute; top: 0; left: 79%;">&nbsp;</div>
+    <div id="grid"></div>
+    <div id="edit" style="position: absolute; left: 5%; cursor: pointer;">EDIT</div>
     <div id="play" style="position: absolute; left: 54%; cursor: pointer;" align="center">PLAY</div>
     <div id="lvlb" style="position: absolute; left: 78%; cursor: pointer;" align="center">MENU</div>
   </div>
@@ -85,10 +84,17 @@
     <div id="sound" style="cursor: pointer;" align="center">&nbsp;</div>
     <div id="tutorial" style="cursor: pointer;" align="center">&nbsp;</div>
     <div id="limits" style="cursor: pointer;" align="center">&nbsp;</div>
+    <div id="stats" style="cursor: pointer;" align="center">STATS</div>
     <div id="filler0" align="center">&nbsp;</div>
     <div id="settb" style="cursor: pointer;" align="center">BACK</div>
     <div id="debug" style="position: absolute; left: 1%; width: 16%; height: 38%;" align="center">&nbsp;</div>
     <div id="logo" style="position: absolute; left: 83%; width: 16%; height: 38%;" align="center">&nbsp;</div>
+  </div>
+
+  <div id="stat" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
+    <div id="statsum" align="center">&nbsp;</div>
+    <div id="statlist">&nbsp;</div>
+    <div id="statb" style="cursor: pointer;" align="center">BACK</div>
   </div>
 
   <div id="abo" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
@@ -154,6 +160,8 @@
 <div id="sign0" style="position: absolute; visibility: hidden;">&nbsp;</div>
 <div id="tutorial0" style="position: absolute; visibility: hidden;">&nbsp;</div>
 <div id="perf0" style="position: absolute; visibility: hidden;">&nbsp;</div>
+<div id="cursor0"></div>
+<div id="launch0"><span id="arrow0"></span></div>
 
 <div id="progress0" style="position: absolute; visibility: hidden; background: #808080; z-index: 100;"></div>
 <div id="progress1" style="position: absolute; visibility: hidden; background: #ffffff; z-index: 101;"></div>

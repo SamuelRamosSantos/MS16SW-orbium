@@ -154,6 +154,7 @@
 
     orbium.loader = new orbium.Loader();
     orbium.storage = new orbium.Storage(); // Before Player, which reads it
+    orbium.stats = new orbium.Stats();
     orbium.player = new orbium.Player();
     orbium.menu = new orbium.Menu();
     orbium.sign = new orbium.Sign();
@@ -176,8 +177,15 @@
 
     orbium.editor = new orbium.Editor();
 
+    // Keyboard is always available, also on devices with touch screen
+    orbium.input = new orbium.Input();
+    orbium.Util.attachListener(window, "keydown", function(e) {orbium.input.keyDown(e);});
+    orbium.Util.attachListener(orbium.pane, "mousedown", function() {orbium.input.pointerUsed();});
+    orbium.Util.attachListener(orbium.pane, "touchstart", function() {orbium.input.pointerUsed();});
+
     (function animloop() {
       orbium.machine.run();
+      orbium.input.update();
       window.requestAnimationFrame(animloop);
     })();
   };

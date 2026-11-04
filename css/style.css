@@ -64,3 +64,148 @@ body {
   color: #cccccc;
   z-index: 20;
 }
+
+#statlist {
+  margin: 2% 6%;
+  overflow-y: auto;
+  -webkit-text-stroke-width: 0;
+}
+
+#statlist table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#statlist th,
+#statlist td {
+  padding: 0.15em 0.4em;
+  text-align: center;
+}
+
+#statlist th {
+  color: white;
+  border-bottom: 1px solid #666666;
+}
+
+/* Menu item highlighted by keyboard navigation */
+#menu .kbfocus {
+  color: #ccffcc !important;
+  -webkit-text-stroke-color: #66ff66 !important;
+  text-shadow: 0 0 12px #66ff66 !important;
+}
+
+#menu .thumb.kbfocus {
+  border-color: #66ff66;
+  box-shadow: 0 0 10px #66ff66;
+}
+
+/* Ring and arrow on the marble that X/F will launch */
+#launch0 {
+  position: absolute;
+  visibility: hidden;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #66ff66;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #66ff66;
+  pointer-events: none;
+  z-index: 11;
+}
+
+#launch0 span {
+  position: absolute;
+  line-height: 1;
+  color: #66ff66;
+  text-shadow: 0 0 4px #000000, 0 0 4px #000000;
+}
+
+#launch0.dir0 span { left: 50%; bottom: 100%; transform: translateX(-50%); }
+#launch0.dir1 span { top: 50%; left: 100%; transform: translateY(-50%); }
+#launch0.dir2 span { left: 50%; top: 100%; transform: translateX(-50%); }
+#launch0.dir3 span { top: 50%; right: 100%; transform: translateY(-50%); }
+
+#cursor0.ready {
+  border-color: #66ff66;
+  box-shadow: 0 0 10px #66ff66;
+}
+
+#cursor0 {
+  position: absolute;
+  visibility: hidden;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 0 8px #ffffff;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#grid {
+  position: absolute;
+  left: 4%;
+  width: 92%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-content: flex-start;
+  padding: 4px;
+  box-sizing: border-box;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  -webkit-text-stroke-width: 0;
+}
+
+.thumb {
+  position: relative;
+  flex: 0 0 calc(25% - 9px);
+  box-sizing: border-box;
+  cursor: pointer;
+  border: 2px solid #444444;
+  border-radius: 4px;
+  background-color: #111111;
+  overflow: hidden;
+}
+
+.thumb:hover {
+  border-color: #aaaaaa;
+}
+
+.thumb canvas,
+.thumb .placeholder {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+}
+
+.thumb span {
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  color: white;
+  text-shadow: 0 0 4px #000000, 0 0 4px #000000;
+}
+
+.thumb.current {
+  border-color: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+}
+
+.thumb.locked {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.thumb.locked:hover {
+  border-color: #444444;
+}
+
+.thumb.locked span {
+  left: 0;
+  right: 0;
+  top: 30%;
+  text-align: center;
+}

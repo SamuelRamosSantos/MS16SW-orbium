@@ -217,6 +217,10 @@
     var explode = function () {
       orbium.player.play("explode");
 
+      if (orbium.stats !== undefined) {
+        orbium.stats.explosion();
+      }
+
       that.broken = true;
       fullc = 0;
     };
@@ -315,92 +319,25 @@
       return this.launchDirection(dir, true);
     };
 
+    // Query only: true if a dockee can be launched in dir right now
+    this.canLaunch = function (dir) {
+      return dockeeForLaunch(dir) !== null;
+    };
+
+    // Query only: canvas position {x, y} of the dockee that would leave
+    // in dir, or null if none can be launched
+    this.launchablePosition = function (dir) {
+      var dockee = dockeeForLaunch(dir);
+
+      if (dockee === null) {
+        return null;
+      }
+
+      return {x: dockee.xpos, y: dockee.ypos};
+    };
+
     this.launchDirection = function (dir, send) {
-      if (judderc !== -1) {
-        return false;
-      }
-
-      var proceed = false;
-
-      if (dir === 0 && this.hasPaths[0] &&
-        this.count >= orbium.Machine.horizTiles) {
-        proceed = true;
-      }
-
-      if (dir === 1 && this.hasPaths[1]) {
-        proceed = true;
-      }
-
-      if (dir === 2 && this.hasPaths[2]) {
-        proceed = true;
-      }
-
-      if (dir === 3 && this.hasPaths[3]) {
-        proceed = true;
-      }
-
-      // We cant launch
-      if (!proceed) {
-        return false;
-      }
-
-      var pos = -1;
-
-      if (this.orientation === 0) {
-        if (dir === 0) {
-          pos = 0;
-        } else if (dir === 1) {
-          pos = 1;
-        } else if (dir === 2) {
-          pos = 2;
-        } else if (dir === 3) {
-          pos = 3;
-        }
-      }
-
-      if (this.orientation === 3) {
-        if (dir === 0) {
-          pos = 1;
-        } else if (dir === 1) {
-          pos = 2;
-        } else if (dir === 2) {
-          pos = 3;
-        } else if (dir === 3) {
-          pos = 0;
-        }
-      }
-
-      if (this.orientation === 2) {
-        if (dir === 0) {
-          pos = 2;
-        } else if (dir === 1) {
-          pos = 3;
-        } else if (dir === 2) {
-          pos = 0;
-        } else if (dir === 3) {
-          pos = 1;
-        }
-      }
-
-      if (this.orientation === 1) {
-        if (dir === 0) {
-          pos = 3;
-        } else if (dir === 1) {
-          pos = 0;
-        } else if (dir === 2) {
-          pos = 1;
-        } else if (dir === 3) {
-          pos = 2;
-        }
-      }
-
-      // Find dockee at pos
-      var dockee = null;
-      for (var i = 0, j = dockees.length; i < j; i++) {
-        if (dockees[i].pos === pos) {
-          dockee = dockees[i];
-        }
-      }
+      var dockee = dockeeForLaunch(dir);
 
       // No dockee to launch
       if (dockee === null) {
@@ -429,6 +366,98 @@
       orbium.machine.counter.countActiveMarbles();
 
       return true;
+    };
+
+    // Dockee that would leave in dir, or null if there is none or the
+    // rotator is turning or there is no path in that direction
+    var dockeeForLaunch = function (dir) {
+      if (judderc !== -1) {
+        return null;
+      }
+
+      var proceed = false;
+
+      if (dir === 0 && that.hasPaths[0] &&
+        that.count >= orbium.Machine.horizTiles) {
+        proceed = true;
+      }
+
+      if (dir === 1 && that.hasPaths[1]) {
+        proceed = true;
+      }
+
+      if (dir === 2 && that.hasPaths[2]) {
+        proceed = true;
+      }
+
+      if (dir === 3 && that.hasPaths[3]) {
+        proceed = true;
+      }
+
+      // We cant launch
+      if (!proceed) {
+        return null;
+      }
+
+      var pos = -1;
+
+      if (that.orientation === 0) {
+        if (dir === 0) {
+          pos = 0;
+        } else if (dir === 1) {
+          pos = 1;
+        } else if (dir === 2) {
+          pos = 2;
+        } else if (dir === 3) {
+          pos = 3;
+        }
+      }
+
+      if (that.orientation === 3) {
+        if (dir === 0) {
+          pos = 1;
+        } else if (dir === 1) {
+          pos = 2;
+        } else if (dir === 2) {
+          pos = 3;
+        } else if (dir === 3) {
+          pos = 0;
+        }
+      }
+
+      if (that.orientation === 2) {
+        if (dir === 0) {
+          pos = 2;
+        } else if (dir === 1) {
+          pos = 3;
+        } else if (dir === 2) {
+          pos = 0;
+        } else if (dir === 3) {
+          pos = 1;
+        }
+      }
+
+      if (that.orientation === 1) {
+        if (dir === 0) {
+          pos = 3;
+        } else if (dir === 1) {
+          pos = 0;
+        } else if (dir === 2) {
+          pos = 1;
+        } else if (dir === 3) {
+          pos = 2;
+        }
+      }
+
+      // Find dockee at pos
+      var dockee = null;
+      for (var i = 0, j = dockees.length; i < j; i++) {
+        if (dockees[i].pos === pos) {
+          dockee = dockees[i];
+        }
+      }
+
+      return dockee;
     };
 
     this.influence = function (marble) {
