@@ -7,6 +7,8 @@
 		this.lastDockTry = null;
 		this.lastTeleportDest = null;
     this.stale = null;
+    this.speed = null;
+    this.baseSpeed = null;
 
     this.framec = null;
 
@@ -41,6 +43,8 @@
       this.lastTeleportDest = null;
 
       this.stale = false;
+      this.baseSpeed = orbium.Marble.speed;
+      this.speed = this.baseSpeed * (orbium.machine.difficulty || 1);
 
       var f = this.color * 12 + this.frame;
       var images = ["marble" + f];
@@ -133,18 +137,18 @@
 
       // Move the marble
       if (this.direction === 0) {
-        this.ypos -= orbium.Marble.speed * dt;
+        this.ypos -= this.speed * dt;
       } else if (this.direction === 1) {
-        this.xpos += orbium.Marble.speed * dt;
+        this.xpos += this.speed * dt;
       } else if (this.direction === 2) {
-        this.ypos += orbium.Marble.speed * dt;
+        this.ypos += this.speed * dt;
       } else if (this.direction === 3) {
-        this.xpos -= orbium.Marble.speed * dt;
+        this.xpos -= this.speed * dt;
       }
 
       this.animate();
 
-      this.framec += orbium.Marble.speed * dt;
+      this.framec += this.speed * dt;
     };
 
     this.getState = function () {

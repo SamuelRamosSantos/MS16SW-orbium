@@ -301,7 +301,11 @@
     };
 
     var activate = function (el) {
-      if (el.classList.contains("thumb")) {
+      var difficulty = el.querySelector("select");
+      if (difficulty !== null) {
+        difficulty.selectedIndex = (difficulty.selectedIndex + 1) % difficulty.options.length;
+        difficulty.dispatchEvent(new Event("change"));
+      } else if (el.classList.contains("thumb")) {
         el.click();
       } else {
         // Menu items listen to mousedown or touchstart, see Menu
@@ -365,6 +369,10 @@
     };
 
     this.keyDown = function (e) {
+      if (e.target && e.target.tagName === "SELECT") {
+        return;
+      }
+
       if (!playing()) {
         // Esc goes back from submenus, Esc/P on the pause menu resumes
         if (e.code === "Escape" && !e.repeat && orbium.menu.back()) {
