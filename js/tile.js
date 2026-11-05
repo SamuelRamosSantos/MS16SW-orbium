@@ -27,100 +27,109 @@
       orbium.Sprite.prototype.construct.call(this, images, xpos, ypos, orbium.Tile.size, orbium.Tile.size);
     };
 
+    orbium.Tile.prototype.updatePaths = function () {
+      // Should tile have top path?
+      var idx = this.count - orbium.Machine.horizTiles;
+      this.hasPaths[0] = !!(idx >= 0 &&
+        idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
+        orbium.machine.tiles[idx].inducesPaths[0] &&
+        this.variant !== 1 &&
+        orbium.machine.tiles[idx].variant !== 1);
+
+      // Should tile have right path?
+      idx = this.count + 1;
+      this.hasPaths[1] = !!(idx >= 0 &&
+        idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
+        (this.count + 1) % orbium.Machine.horizTiles !== 0 &&
+        orbium.machine.tiles[idx].inducesPaths[1] &&
+        this.variant !== 0 &&
+        orbium.machine.tiles[idx].variant !== 0);
+
+      // Should tile have bottom path?
+      idx = this.count + orbium.Machine.horizTiles;
+      this.hasPaths[2] = !!(idx >= 0 &&
+        idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
+        orbium.machine.tiles[idx].inducesPaths[2] &&
+        this.variant !== 1 &&
+        orbium.machine.tiles[idx].variant !== 1);
+
+      // Should tile have left path?
+      idx = this.count - 1;
+      this.hasPaths[3] = !!(idx >= 0 &&
+        idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
+        this.count % orbium.Machine.horizTiles !== 0 &&
+        orbium.machine.tiles[idx].inducesPaths[3] &&
+        this.variant !== 0 &&
+        orbium.machine.tiles[idx].variant !== 0);
+
+      // First row rotators
+      if (this.count < orbium.Machine.horizTiles &&
+        this instanceof orbium.Rotator) {
+        this.hasPaths[0] = true;
+      }
+    };
+
+    orbium.Tile.prototype.calculateFrame = function () {
+      var frame = 0;
+
+      if (this.hasPaths[0] && !this.hasPaths[1] &&
+        !this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 0;
+      } else if (!this.hasPaths[0] && this.hasPaths[1] &&
+        !this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 1;
+      } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
+        this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 2;
+      } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
+        !this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 3;
+      } else if (this.hasPaths[0] && this.hasPaths[1] &&
+        !this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 4;
+      } else if (!this.hasPaths[0] && this.hasPaths[1] &&
+        this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 5;
+      } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
+        this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 6;
+      } else if (this.hasPaths[0] && !this.hasPaths[1] &&
+        !this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 7;
+      } else if (this.hasPaths[0] && this.hasPaths[1] &&
+        this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 8;
+      } else if (!this.hasPaths[0] && this.hasPaths[1] &&
+        this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 9;
+      } else if (this.hasPaths[0] && !this.hasPaths[1] &&
+        this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 10;
+      } else if (this.hasPaths[0] && this.hasPaths[1] &&
+        !this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 11;
+      } else if (this.hasPaths[0] && !this.hasPaths[1] &&
+        this.hasPaths[2] && !this.hasPaths[3]) {
+        frame = 12;
+      } else if (!this.hasPaths[0] && this.hasPaths[1] &&
+        !this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 13;
+      } else if (this.hasPaths[0] && this.hasPaths[1] &&
+        this.hasPaths[2] && this.hasPaths[3]) {
+        frame = 14;
+      }
+
+      if (this.broken) {
+        frame += 15;
+      }
+
+      return frame;
+    };
+
     orbium.Tile.prototype.setBase = function (baseName) {
       if (baseName !== undefined) {
-        // Should tile have top path?
-        var idx = this.count-orbium.Machine.horizTiles;
-        this.hasPaths[0] = !!(idx >= 0 &&
-          idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
-          orbium.machine.tiles[idx].inducesPaths[0] &&
-          this.variant !== 1 &&
-          orbium.machine.tiles[idx].variant !== 1);
-
-        // Should tile have right path?
-        idx = this.count + 1;
-        this.hasPaths[1] = !!(idx >= 0 &&
-          idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
-          (this.count + 1) % orbium.Machine.horizTiles !== 0 &&
-          orbium.machine.tiles[idx].inducesPaths[1] &&
-          this.variant !== 0 &&
-           orbium.machine.tiles[idx].variant !== 0);
-
-        // Should tile have bottom path?
-        idx = this.count + orbium.Machine.horizTiles;
-        this.hasPaths[2] = !!(idx >= 0 &&
-          idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
-          orbium.machine.tiles[idx].inducesPaths[2] &&
-          this.variant !== 1 &&
-          orbium.machine.tiles[idx].variant !== 1);
-
-        // Should tile have left path?
-        idx = this.count - 1;
-        this.hasPaths[3] = !!(idx >= 0 &&
-          idx < orbium.Machine.horizTiles * orbium.Machine.vertTiles &&
-          this.count % orbium.Machine.horizTiles !== 0 &&
-          orbium.machine.tiles[idx].inducesPaths[3] &&
-          this.variant !== 0 &&
-          orbium.machine.tiles[idx].variant !== 0);
-
-        // First row rotators
-        if (this.count < orbium.Machine.horizTiles &&
-          this instanceof orbium.Rotator) {
-          this.hasPaths[0] = true;
-        }
-
-        var frame = 0;
-
-        if (this.hasPaths[0] && !this.hasPaths[1] &&
-          !this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 0;
-        } else if (!this.hasPaths[0] && this.hasPaths[1] &&
-          !this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 1;
-        } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
-          this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 2;
-        } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
-          !this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 3;
-        } else if (this.hasPaths[0] && this.hasPaths[1] &&
-          !this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 4;
-        } else if (!this.hasPaths[0] && this.hasPaths[1] &&
-          this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 5;
-        } else if (!this.hasPaths[0] && !this.hasPaths[1] &&
-          this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 6;
-        } else if (this.hasPaths[0] && !this.hasPaths[1] &&
-          !this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 7;
-        } else if (this.hasPaths[0] && this.hasPaths[1] &&
-          this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 8;
-        } else if (!this.hasPaths[0] && this.hasPaths[1] &&
-          this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 9;
-        } else if (this.hasPaths[0] && !this.hasPaths[1] &&
-          this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 10;
-        } else if (this.hasPaths[0] && this.hasPaths[1] &&
-          !this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 11;
-        } else if (this.hasPaths[0] && !this.hasPaths[1] &&
-          this.hasPaths[2] && !this.hasPaths[3]) {
-          frame = 12;
-        } else if (!this.hasPaths[0] && this.hasPaths[1] &&
-          !this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 13;
-        } else if (this.hasPaths[0] && this.hasPaths[1] &&
-          this.hasPaths[2] && this.hasPaths[3]) {
-          frame = 14;
-        }
-
-        if (this.broken) {
-          frame += 15;
-        }
+        this.updatePaths();
+        var frame = this.calculateFrame();
 
         this.setImage(0, baseName + frame);
 

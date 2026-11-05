@@ -401,7 +401,7 @@
         return false;
       }
 
-      if (orbium.machine.counter.isLaunchAllowed()) {
+      if (orbium.machine.isLaunchAllowed()) {
         if (orbium.client !== undefined && send) {
           orbium.client.send({launch: this.count, dir: dir});
         }
@@ -420,7 +420,7 @@
         orbium.Util.addArrayElement(orbium.machine.marbles, marble);
       }
 
-      orbium.machine.counter.countActiveMarbles();
+      orbium.machine.countActiveMarbles();
 
       return true;
     };
@@ -446,8 +446,8 @@
 
             orbium.machine.checkRotatorsFull();
 
-            orbium.machine.lane.resetTimer();
-            orbium.machine.lane.injectMarble();
+            orbium.machine.resetLaneTimer();
+            orbium.machine.injectMarble();
           } else {
             marble.lastDockTry = this;
           }

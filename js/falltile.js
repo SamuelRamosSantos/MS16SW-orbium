@@ -10,12 +10,6 @@
       this.inducesPaths = [true, false, false, false];
     };
 
-    this.fallMarble = function (marble) {
-      marble.xpos = this.xpos + orbium.Tile.size / 2 - orbium.Marble.size / 2;
-      marble.ypos = this.ypos - orbium.Marble.size;
-      marble.direction = 2;
-    };
-
     this.influence = function (marble) {
       // Falldown
       if (this.count < orbium.Machine.horizTiles && marble.fresh) {
@@ -26,12 +20,12 @@
           this.ypos - orbium.Bar.height,
           orbium.Marble.size / 2,
           orbium.Bar.height) &&
-          orbium.machine.counter.isFallAllowed()) {
-          this.fallMarble(marble);
+          orbium.machine.isFallAllowed()) {
+          marble.fallMarble(this);
           marble.fresh = false;
-          orbium.machine.lane.resetTimer();
-          orbium.machine.lane.injectMarble();
-          orbium.machine.counter.countActiveMarbles();
+          orbium.machine.resetLaneTimer();
+          orbium.machine.injectMarble();
+          orbium.machine.countActiveMarbles();
         }
       }
 
