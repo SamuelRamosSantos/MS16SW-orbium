@@ -154,8 +154,24 @@
   </div>
 
   <div id="edt" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
+    <div id="edmeta">
+      <label for="edname">NAME</label>
+      <input id="edname" type="text" maxlength="24" value="CUSTOM 01"/>
+      <label for="edauthor">AUTHOR</label>
+      <input id="edauthor" type="text" maxlength="24" value="PLAYER"/>
+      <label for="edlane">ORB TIME</label>
+      <input id="edlane" type="number" min="1" max="99" value="20"/>
+      <label for="edclock">LVL TIME</label>
+      <input id="edclock" type="number" min="1" max="99" value="10"/>
+      <div id="edclr" style="cursor: pointer;" align="center">CLEAR</div>
+    </div>
+    <div id="edmsg" style="visibility: hidden;">&nbsp;</div>
     <div id="sav" style="position: absolute; cursor: pointer;">SAVE</div>
     <div id="tst" style="position: absolute; cursor: pointer;">TEST</div>
+    <div id="exp" style="position: absolute; cursor: pointer;">EXPORT</div>
+    <div id="imp" style="position: absolute; cursor: pointer;">IMPORT</div>
+    <div id="edb" style="position: absolute; cursor: pointer;">BACK</div>
+    <input id="impfile" type="file" accept=".json,application/json" style="display: none;"/>
   </div>
 
   <div id="fail" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
