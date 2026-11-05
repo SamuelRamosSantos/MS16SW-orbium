@@ -56,6 +56,7 @@
   <script src="js/init.js"></script>
 </head>
 <body>
+<div id="level-progress" role="progressbar" aria-label="Progresso do nível" aria-valuemin="0"><div id="level-progress-fill"></div><span id="level-progress-label"></span></div>
 <div id="pane">
   <canvas id="canv" style="position: absolute; visibility: hidden;"></canvas>
 </div>
@@ -64,6 +65,7 @@
   <div id="main" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
     <div id="start" style="cursor: pointer;" align="center">&nbsp;</div>
     <div id="select" style="cursor: pointer;" align="center">SELECT LVL</div>
+    <div class="difficulty" align="center"><label title="Dificuldade"><select aria-label="Dificuldade"><option value="0.75">Fácil</option><option value="1" selected>Normal</option><option value="1.25">Difícil</option></select></label></div>
     <div id="settings" style="cursor: pointer;" align="center">SETTINGS</div>
     <div id="about" style="cursor: pointer;" align="center">ABOUT</div>
   </div>
@@ -72,7 +74,7 @@
     <div id="pack" style="position: absolute; left: 5%; cursor: pointer;">LEVELS: X</div>
     <div id="nr" style="position: absolute; left: 79%;">&nbsp;</div>
     <div id="testfill0">&nbsp;</div>
-    <div id="testfill1">&nbsp;</div>
+    <div id="testfill1" class="difficulty" align="center"><label title="Dificuldade"><select aria-label="Dificuldade do mapa"><option value="0.75">Fácil</option><option value="1" selected>Normal</option><option value="1.25">Difícil</option></select></label></div>
     <div id="edit" style="position: absolute; left: 82%; cursor: pointer;">EDIT</div>
     <div id="testfill2">&nbsp;</div>
     <div id="prev" style="position: absolute; left: 5%; cursor: pointer;" align="center">PREV</div>

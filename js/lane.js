@@ -1,4 +1,4 @@
-(function (orbium, undefined) {
+﻿(function (orbium, undefined) {
   orbium.Lane = function () {
     var bars = null;
     var timer = null;
@@ -31,11 +31,7 @@
 
     this.calculateSinks = function () {
       for (var i = 0, j = bars.length; i < j; i++) {
-        if (orbium.machine.tiles[i].inducesSink) {
-          bars[i].makeSink();
-        } else {
-          bars[i].unSink();
-        }
+        bars[i].setSink(orbium.machine.tiles[i].inducesSink);
       }
     };
 

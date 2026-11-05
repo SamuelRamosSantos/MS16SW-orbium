@@ -1,4 +1,4 @@
-(function (orbium, undefined) {
+﻿(function (orbium, undefined) {
   orbium.Tile = function () {
     this.count = null;
     this.xnr = null;
@@ -139,4 +139,11 @@
 
   orbium.Tile.prototype = new orbium.Sprite();
   orbium.Tile.prototype.constructor = orbium.Tile;
+
+  orbium.Tile.createEmpty = function (count, xnr, ynr) {
+    var tile = new orbium.Tile();
+    var x = orbium.Util.generateRandomIndex(6);
+    tile.construct(["emptytile" + x], count, xnr, ynr);
+    return tile;
+  };
 })(typeof window == "object" ? window.orbium = window.orbium || {} : orbium);

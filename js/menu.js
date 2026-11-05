@@ -139,6 +139,20 @@
       contact = document.getElementById("contact");
       gfx = document.getElementById("gfx");
 
+      var difficulties = document.querySelectorAll(".difficulty select");
+      for (var i = 0; i < difficulties.length; i++) {
+        difficulties[i].onchange = function () {
+          orbium.machine.difficulty = Number(this.value);
+          for (var k = 0; k < orbium.machine.marbles.length; k++) {
+            var marble = orbium.machine.marbles[k];
+            marble.speed = marble.baseSpeed * orbium.machine.difficulty;
+          }
+          for (var j = 0; j < difficulties.length; j++) {
+            difficulties[j].value = this.value;
+          }
+        };
+      }
+
       var left = orbium.xpos + orbium.Marble.size;
       var top = orbium.ypos + orbium.Marble.size;
       var width = orbium.width - orbium.Marble.size * 2;
@@ -169,6 +183,8 @@
       next.style.fontSize = "" + fontSize + "px";
       play.style.fontSize = "" + fontSize + "px";
       lvlb.style.fontSize = "" + fontSize + "px";
+
+      document.getElementById("testfill1").style.fontSize = "" + fontSize + "px";
 
       sound.style.fontSize = "" + fontSize + "px";
       tutorial.style.fontSize = "" + fontSize + "px";

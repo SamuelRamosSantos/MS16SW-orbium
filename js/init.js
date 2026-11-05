@@ -123,6 +123,9 @@
       orbium.ypos = Math.round(avail_height/2-orbium.height/2);
     }
 
+    document.getElementById("level-progress").style.setProperty("--board-right",
+      (orbium.xpos + orbium.width) + "px");
+
     orbium.pane = document.getElementById("pane");
     orbium.pane.style.width = "" + orbium.width + "px";
     orbium.pane.style.height = "" + orbium.height + "px";

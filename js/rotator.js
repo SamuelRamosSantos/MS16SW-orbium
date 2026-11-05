@@ -1,4 +1,4 @@
-(function (orbium, undefined) {
+﻿(function (orbium, undefined) {
   orbium.Rotator = function (count, xnr, ynr) {
     this.orientation = null;
     this.broken = null;
@@ -218,6 +218,7 @@
       orbium.player.play("explode");
 
       that.broken = true;
+      orbium.machine.updateLevelProgress();
       fullc = 0;
     };
 
@@ -415,13 +416,14 @@
         dockee.destruct();
         orbium.Util.removeArrayElement(dockees, dockee);
 
-        var marble = new orbium.Marble(
-          dockee.xpos,
-          dockee.ypos,
-          dockee.color,
-          dockee.frame,
-          dir,
-          false);
+        var marble = new orbium.Marble({
+          xpos: dockee.xpos,
+          ypos: dockee.ypos,
+          color: dockee.color,
+          frame: dockee.frame,
+          direction: dir,
+          fresh: false
+        });
 
         orbium.Util.addArrayElement(orbium.machine.marbles, marble);
       }
@@ -687,6 +689,8 @@
         blockc = -1;
       }
 
+      var stageChanged = false;
+
       if (fullc > 2 && stage === 0) {
         for (i = 0, j = dockees.length; i < j; i++) {
           dockees[i].destruct();
@@ -694,19 +698,19 @@
         dockees.length = 0;
         this.setImage(2, "explosion0");
         stage = 1;
-        this.invalidate();
+        stageChanged = true;
       } else if (fullc > 4 && stage === 1) {
         this.setImage(2, "explosion1");
         stage = 2;
-        this.invalidate();
+        stageChanged = true;
       } else if (fullc > 6 && stage === 2) {
         this.setImage(2, "explosion2");
         stage = 3;
-        this.invalidate();
+        stageChanged = true;
       } else if (fullc > 8 && stage === 3) {
         this.setImage(2, "explosion3");
         stage = 4;
-        this.invalidate();
+        stageChanged = true;
       } else if (fullc > 10 && stage === 4) {
         fullc = -1;
         this.setBase("rotatile");
@@ -715,9 +719,13 @@
         this.setImage(2, null);
 
         stage = 0;
-        this.invalidate();
+        stageChanged = true;
 
         orbium.machine.checkLevelComplete();
+      }
+
+      if (stageChanged) {
+        this.invalidate();
       }
 
       if (judderc !== -1) {

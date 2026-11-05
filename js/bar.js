@@ -1,4 +1,4 @@
-(function (orbium, undefined) {
+﻿(function (orbium, undefined) {
   orbium.Bar = function (nr) {
     var passed = null;
     this.nr = null;
@@ -14,14 +14,9 @@
       orbium.Sprite.prototype.construct.call(this, images, xpos, ypos, orbium.Tile.size, orbium.Bar.height);
     };
 
-    this.makeSink = function () {
-      var n = this.nr + 8;
-      this.setImage(0, "bar" + n);
-      this.invalidate();
-    };
-
-    this.unSink = function () {
-      this.setImage(0, "bar" + this.nr);
+    this.setSink = function (isSink) {
+      var imageIndex = isSink ? (this.nr + 8) : this.nr;
+      this.setImage(0, "bar" + imageIndex);
       this.invalidate();
     };
 

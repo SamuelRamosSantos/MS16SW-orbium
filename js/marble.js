@@ -1,5 +1,6 @@
-(function (orbium, undefined) {
-  orbium.Marble = function (xpos, ypos, color, frame, direction, fresh) {
+﻿(function (orbium, undefined) {
+  orbium.Marble = function (options) {
+    options = options || {};
     this.color = null;
     this.frame = null;
     this.direction = null;
@@ -7,40 +8,26 @@
 		this.lastDockTry = null;
 		this.lastTeleportDest = null;
     this.stale = null;
+    this.speed = null;
+    this.baseSpeed = null;
 
     this.framec = null;
 
     this.construct = function () {
-      if (xpos === undefined) {
-        xpos = orbium.width;
-      }
+      var xpos = options.xpos !== undefined ? options.xpos : orbium.width;
+      var ypos = options.ypos !== undefined ? options.ypos : (orbium.Bar.height / 2 - orbium.Marble.size / 2);
 
-      if (ypos === undefined) {
-        ypos = orbium.Bar.height / 2 - orbium.Marble.size / 2;
-      }
-
-      this.color = color;
-      if (this.color === undefined) {
-        this.color = orbium.machine.nextColor;
-      }
-
-      this.frame = frame;
-      if (this.frame === undefined) {
-        this.frame = orbium.Util.generateRandomIndex(5);
-      }
-
-      if (direction === undefined) {
-        this.direction = 3;
-      } else {
-        this.direction = direction;
-      }
-
-      this.fresh = !!(fresh === undefined || fresh);
+      this.color = options.color !== undefined ? options.color : orbium.machine.nextColor;
+      this.frame = options.frame !== undefined ? options.frame : orbium.Util.generateRandomIndex(5);
+      this.direction = options.direction !== undefined ? options.direction : 3;
+      this.fresh = options.fresh !== undefined ? !!options.fresh : true;
 
       this.lastDockTry = null;
       this.lastTeleportDest = null;
 
       this.stale = false;
+      this.baseSpeed = orbium.Marble.speed;
+      this.speed = this.baseSpeed * (orbium.machine.difficulty || 1);
 
       var f = this.color * 12 + this.frame;
       var images = ["marble" + f];
@@ -127,18 +114,18 @@
 
       // Move the marble
       if (this.direction === 0) {
-        this.ypos -= orbium.Marble.speed * dt;
+        this.ypos -= this.speed * dt;
       } else if (this.direction === 1) {
-        this.xpos += orbium.Marble.speed * dt;
+        this.xpos += this.speed * dt;
       } else if (this.direction === 2) {
-        this.ypos += orbium.Marble.speed * dt;
+        this.ypos += this.speed * dt;
       } else if (this.direction === 3) {
-        this.xpos -= orbium.Marble.speed * dt;
+        this.xpos -= this.speed * dt;
       }
 
       this.animate();
 
-      this.framec += orbium.Marble.speed * dt;
+      this.framec += this.speed * dt;
     };
 
     this.getState = function () {
