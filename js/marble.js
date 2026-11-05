@@ -54,6 +54,12 @@
       orbium.Sprite.prototype.destruct.call(this);
     };
 
+    this.fallMarble = function (tile) {
+      this.xpos = tile.xpos + orbium.Tile.size / 2 - orbium.Marble.size / 2;
+      this.ypos = tile.ypos - orbium.Marble.size;
+      this.direction = 2;
+    };
+
     this.bounce = function () {
       if (this.direction === 0) {
         this.direction = 2;

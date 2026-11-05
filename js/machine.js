@@ -220,6 +220,30 @@
       }
     };
 
+    this.resetLaneTimer = function () {
+      this.lane.resetTimer();
+    };
+
+    this.injectMarble = function () {
+      this.lane.injectMarble();
+    };
+
+    this.setTimerStage = function (step) {
+      this.lane.setTimerStage(step);
+    };
+
+    this.isLaunchAllowed = function () {
+      return this.counter.isLaunchAllowed();
+    };
+
+    this.isFallAllowed = function () {
+      return this.counter.isFallAllowed();
+    };
+
+    this.countActiveMarbles = function () {
+      this.counter.countActiveMarbles();
+    };
+
     this.restartLevel = function () {
       this.paused = false;
       this.resetLevel();
@@ -653,10 +677,6 @@
       }
     };
 
-    var drawLane = function () {
-      that.lane.draw();
-    };
-
     var drawTilesFirstPass = function () {
       for (var i = 0, j = that.tiles.length; i < j; i++) {
         var tile = that.tiles[i];
@@ -704,7 +724,7 @@
             }
           }
 
-          drawLane();
+          this.lane.draw();
           drawTilesFirstPass();
           drawMarbles();
           drawTilesSecondPass();

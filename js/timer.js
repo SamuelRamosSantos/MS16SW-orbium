@@ -33,7 +33,7 @@
 
       for (var i = orbium.Machine.horizTiles; i >= 0; i--) {
         if (this.xpos < orbium.Tile.size * i) {
-          orbium.machine.lane.setTimerStage(i + 1);
+          orbium.machine.setTimerStage(i + 1);
         }
       }
 
