@@ -65,6 +65,17 @@ body {
   z-index: 20;
 }
 
+#stopwatch0 {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
+  visibility: hidden;
+  color: #cccccc;
+  text-align: center;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 12;
+}
+
 #statlist {
   margin: 2% 6%;
   overflow-y: auto;

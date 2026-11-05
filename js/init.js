@@ -159,6 +159,7 @@
     orbium.menu = new orbium.Menu();
     orbium.sign = new orbium.Sign();
     orbium.perf = new orbium.Perf();
+    orbium.stopwatch = new orbium.Stopwatch();
     orbium.tutorial = new orbium.Tutorial();
     orbium.machine = new orbium.Machine();
     orbium.machine.nextLevel();

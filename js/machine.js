@@ -66,6 +66,11 @@
 
       this.levnr++;
 
+      // O cronômetro recomeça a cada fase carregada ou reiniciada
+      if (orbium.stopwatch !== undefined) {
+        orbium.stopwatch.reset();
+      }
+
       if (this.lane !== null) {
         this.lane.destruct();
       }
@@ -642,6 +647,10 @@
       if (orbium.perf !== undefined) {
         orbium.perf.update(dt);
       }
+
+      if (orbium.stopwatch !== undefined) {
+        orbium.stopwatch.update(dt);
+      }
     };
 
     var drawLane = function () {
@@ -704,6 +713,10 @@
             this.first = false;
 
             this.hideProgress();
+
+            if (orbium.stopwatch !== undefined) {
+              orbium.stopwatch.show();
+            }
 
             orbium.menu.showMain();
           }
