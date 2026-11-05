@@ -35,19 +35,15 @@
       this.paused = true;
       this.first = true;
 
-      // Read the level we played last
+      // Read the level we played last. Devolve null se não existir,
+      // estiver corrompido ou fora das fases disponíveis
       if (orbium.storage !== undefined) {
-        this.levnr = orbium.storage.readValue("lastlevel");
-      }
-
-      if (this.levnr !== null) {
-        this.levnr = parseInt(this.levnr);
+        this.levnr = orbium.storage.readInt("lastlevel", 0,
+          orbium.level.length - 1);
       }
 
       // If not set start at level -1, else decr level with one
       if (this.levnr === null) {
-        this.levnr = -1;
-      } else if (this.levnr > orbium.level.length - 1) {
         this.levnr = -1;
       } else if (this.levnr > -1) {
         this.levnr--;
@@ -187,10 +183,8 @@
         orbium.storage.writeValue("lastlevel", levnr);
 
         // Read the level we have reached
-        var reached = orbium.storage.readValue("reachedlevel");
-        if (reached !== null) {
-          reached = parseInt(reached);
-        }
+        // Null se não existir ou estiver corrompido
+        var reached = orbium.storage.readInt("reachedlevel", 0);
 
         // Save reached level if higher than ever before
         if (reached === null || levnr > reached) {
