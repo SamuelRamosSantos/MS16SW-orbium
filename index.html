@@ -75,6 +75,7 @@
   </script>
 </head>
 <body>
+<div id="level-progress" role="progressbar" aria-label="Progresso do nível" aria-valuemin="0"><div id="level-progress-fill"></div><span id="level-progress-label"></span></div>
 <div id="pane">
   <canvas id="canv" style="position: absolute; visibility: hidden;"></canvas>
 </div>
@@ -83,6 +84,7 @@
   <div id="main" style="position: absolute; top: 0; width: 100%; visibility: hidden;">
     <div id="start" style="cursor: pointer;" align="center">&nbsp;</div>
     <div id="select" style="cursor: pointer;" align="center">SELECT LVL</div>
+    <div class="difficulty" style="cursor: pointer;" align="center"><label title="Dificuldade"><select aria-label="Dificuldade"><option value="0.75">Fácil</option><option value="1" selected>Normal</option><option value="1.25">Difícil</option></select></label></div>
     <div id="settings" style="cursor: pointer;" align="center">SETTINGS</div>
     <div id="about" style="cursor: pointer;" align="center">ABOUT</div>
   </div>
@@ -92,6 +94,7 @@
     <div id="nr" style="position: absolute; top: 0; left: 79%;">&nbsp;</div>
     <div id="grid"></div>
     <div id="edit" style="position: absolute; left: 5%; cursor: pointer;">EDIT</div>
+    <div id="map-difficulty" class="difficulty" style="position: absolute; left: 24%; width: 28%; cursor: pointer;" align="center"><label title="Dificuldade"><select aria-label="Dificuldade do mapa"><option value="0.75">Fácil</option><option value="1" selected>Normal</option><option value="1.25">Difícil</option></select></label></div>
     <div id="play" style="position: absolute; left: 54%; cursor: pointer;" align="center">PLAY</div>
     <div id="lvlb" style="position: absolute; left: 78%; cursor: pointer;" align="center">MENU</div>
   </div>

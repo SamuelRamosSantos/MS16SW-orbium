@@ -151,6 +151,20 @@
       contact = document.getElementById("contact");
       gfx = document.getElementById("gfx");
 
+      var difficulties = document.querySelectorAll(".difficulty select");
+      for (var i = 0; i < difficulties.length; i++) {
+        difficulties[i].onchange = function () {
+          orbium.machine.difficulty = Number(this.value);
+          for (var k = 0; k < orbium.machine.marbles.length; k++) {
+            var marble = orbium.machine.marbles[k];
+            marble.speed = marble.baseSpeed * orbium.machine.difficulty;
+          }
+          for (var j = 0; j < difficulties.length; j++) {
+            difficulties[j].value = this.value;
+          }
+        };
+      }
+
       var left = orbium.xpos + orbium.Marble.size;
       var top = orbium.ypos + orbium.Marble.size;
       var width = orbium.width - orbium.Marble.size * 2;
@@ -192,6 +206,9 @@
       edit.style.top = "" + footerTop + "px";
       play.style.top = "" + footerTop + "px";
       lvlb.style.top = "" + footerTop + "px";
+      var difficulty = document.getElementById("map-difficulty");
+      difficulty.style.top = "" + footerTop + "px";
+      difficulty.style.fontSize = "" + fontSize + "px";
 
       thumbnail = new orbium.Thumbnail();
 
@@ -338,6 +355,10 @@
     };
 
     this.hideMain = function () {
+      if (document.activeElement && document.activeElement.tagName === "SELECT") {
+        document.activeElement.blur();
+      }
+
       menu.style.visibility = "hidden";
       main.style.visibility = "hidden";
     };

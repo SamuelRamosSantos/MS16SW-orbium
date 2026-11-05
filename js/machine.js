@@ -20,6 +20,7 @@
     this.first = null;
 
     this.nextColor = null;
+    this.difficulty = 1;
 
     this.construct = function () {
       this.tiles = [];
@@ -111,6 +112,7 @@
 
       // Save level progress
       this.saveLevel(this.levnr);
+      this.updateLevelProgress();
     };
 
     this.createTile = function (symbol, count, xnr, ynr) {
@@ -213,6 +215,7 @@
 
     this.startLevel = function () {
       this.paused = false;
+      this.updateLevelProgress();
       this.lane.injectMarble();
 
       if (orbium.stats !== undefined) {
@@ -256,6 +259,7 @@
 
     this.failLevel = function (msg) {
       this.paused = true;
+      this.updateLevelProgress();
 
       if (orbium.stats !== undefined) {
         orbium.stats.fail();
@@ -272,10 +276,12 @@
 
     this.pause = function () {
       this.paused = true;
+      this.updateLevelProgress();
     };
 
     this.resume = function () {
       this.paused = false;
+      this.updateLevelProgress();
     };
 
     this.getColorCount = function () {
@@ -301,6 +307,41 @@
       }
     };
 
+    this.updateLevelProgress = function () {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      var progress = document.getElementById("level-progress");
+      if (!progress) {
+        return;
+      }
+
+      var total = 0;
+      var completed = 0;
+      for (var i = 0; i < this.tiles.length; i++) {
+        if (this.tiles[i] instanceof orbium.Rotator) {
+          total++;
+          if (this.tiles[i].broken) {
+            completed++;
+          }
+        }
+      }
+
+      progress.style.visibility = this.paused ? "hidden" : "visible";
+      var maximum = this.levnr === orbium.level.length - 1;
+      progress.setAttribute("aria-valuemax", total);
+      progress.setAttribute("aria-valuenow", completed);
+      document.getElementById("level-progress-fill").style.width =
+        (total ? completed / total * 100 : 100) + "%";
+      var label = "Nível " + (this.levnr + 1) + " · " + completed + "/" + total;
+      if (maximum) {
+        label += completed === total ? " · Concluído" : " · Último nível";
+      }
+      document.getElementById("level-progress-label").textContent = label;
+      progress.setAttribute("aria-valuetext", label);
+    };
+
     this.checkLevelComplete = function () {
       var complete = true;
 
@@ -316,6 +357,7 @@
 
       if (complete) {
         this.paused = true;
+        this.updateLevelProgress();
 
         if (orbium.stats !== undefined) {
           orbium.stats.complete(this.levnr);

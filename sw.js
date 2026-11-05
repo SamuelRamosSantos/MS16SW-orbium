@@ -3,7 +3,7 @@
 //
 // Ao adicionar ou remover arquivos do jogo, atualize a lista FILES e aumente
 // o número da versão em CACHE_NAME para os jogadores receberem a mudança.
-var CACHE_NAME = "orbium-v1";
+var CACHE_NAME = "orbium-v2";
 
 var FILES = [
   "./",

@@ -222,6 +222,7 @@
       }
 
       that.broken = true;
+      orbium.machine.updateLevelProgress();
       fullc = 0;
     };
 
